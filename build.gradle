@@ -1,0 +1,31 @@
+abstract class Something {
+    @Input
+    abstract RegularFileProperty getInputFile();
+}
+
+abstract class SomeTask extends DefaultTask {
+    @Nested
+    abstract Property<Something> getSomething();
+
+    @TaskAction
+    void action() {}
+}
+
+abstract class OtherTask extends DefaultTask {
+    @OutputFile
+    abstract RegularFileProperty getOutputProperty();
+
+    @TaskAction
+    void action() {}
+}
+
+TaskProvider<OtherTask> otherTask = tasks.register('otherTask', OtherTask) {}
+
+tasks.register('someTask', SomeTask) {
+    getSomething().set(otherTask.flatMap {it.getOutputProperty() }.map {
+        Something something = objects.newInstance(Something)
+        something.getInputFile().set(it)
+        return something
+    })
+}
+
