@@ -10,5 +10,6 @@ To repro:
 2. Change the `@Nested` on `SomeTask` to `@Input` - the task dependency is now linked up, which is what we'd expect in the nested case too:
    ```
    $ gw --dry-run someTask
+   :otherTask SKIPPED
    :someTask SKIPPED
    ```
